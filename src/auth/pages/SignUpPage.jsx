@@ -1,8 +1,10 @@
-import { Button, Grid, TextField, Typography } from '@mui/material'
+import { Alert, Button, Grid, TextField, Typography } from '@mui/material'
 import { Link, Link as RouterLink } from 'react-router-dom'
 import { useForm } from '../../hooks'
 import { AuthLayout } from '../layout/AuthLayout'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
+import { startEmailAndPasswordSignIn } from '../../store/auth/thunks'
+import { useDispatch, useSelector } from 'react-redux'
 
 const formData = {
   email: '',
@@ -20,12 +22,20 @@ const formValidations = {
 }
 
 export const SignUpPage = () => {
+  const { status, errorMessage } = useSelector((state) => state.auth)
+  const isCheckingAuthentication = useMemo(
+    () => status === 'checking',
+    [status]
+  )
+
+  const dispatch = useDispatch()
   const [formSubmitted, setFormSubmitted] = useState(false)
 
   const {
     email,
     password,
     onInputChange,
+    onFormReset,
     displayName,
     formState,
     isFormValid,
@@ -38,7 +48,7 @@ export const SignUpPage = () => {
     event.preventDefault()
     setFormSubmitted(true)
     if (!isFormValid) return
-    console.log(formState)
+    dispatch(startEmailAndPasswordSignIn(formState))
   }
   return (
     <AuthLayout title='Sign Up'>
@@ -103,9 +113,21 @@ export const SignUpPage = () => {
             <Grid
               item
               xs={12}
-              sm={6}
+              display={errorMessage ? '' : 'none'}
+            >
+              <Alert
+                severity='error'
+                sx={{ marginTop: 2 }}
+              >
+                {errorMessage}
+              </Alert>
+            </Grid>
+            <Grid
+              item
+              xs={12}
             >
               <Button
+                disabled={isCheckingAuthentication}
                 variant='contained'
                 fullWidth
                 sx={{ mt: 2 }}

@@ -1,6 +1,9 @@
 /* Los thunks son acciones que yo puedo hacer distpatch(disparar) pero que son async */
 
-import { signInWithGoogle } from '../../firebase/providers'
+import {
+  registerWithEmailAndPassword,
+  signInWithGoogle
+} from '../../firebase/providers'
 import { checkingCredentials, login, logout } from './auth-slice'
 
 export const checkingAuthentication = () => {
@@ -18,5 +21,26 @@ export const startGoogleSignIn = () => {
       dispatch(logout(result.errorMessage))
     }
     dispatch(login(result))
+  }
+}
+
+export const startEmailAndPasswordSignIn = ({
+  email,
+  password,
+  displayName
+}) => {
+  return async (dispatch) => {
+    dispatch(checkingCredentials())
+    const { ok, uid, photoURL, errorMessage } =
+      await registerWithEmailAndPassword({
+        email,
+        password,
+        displayName
+      })
+
+    if (!ok) {
+      return dispatch(logout({ errorMessage }))
+    }
+    dispatch(login({ uid, photoURL, displayName, email }))
   }
 }
