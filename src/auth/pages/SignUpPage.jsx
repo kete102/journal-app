@@ -1,10 +1,10 @@
 import { Alert, Button, Grid, TextField, Typography } from '@mui/material'
+import { useMemo, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { Link, Link as RouterLink } from 'react-router-dom'
 import { useForm } from '../../hooks'
+import { startRegisterEmailAndPassword } from '../../store/auth/thunks'
 import { AuthLayout } from '../layout/AuthLayout'
-import { useMemo, useState } from 'react'
-import { startEmailAndPasswordSignIn } from '../../store/auth/thunks'
-import { useDispatch, useSelector } from 'react-redux'
 
 const formData = {
   email: '',
@@ -35,7 +35,6 @@ export const SignUpPage = () => {
     email,
     password,
     onInputChange,
-    onFormReset,
     displayName,
     formState,
     isFormValid,
@@ -48,7 +47,7 @@ export const SignUpPage = () => {
     event.preventDefault()
     setFormSubmitted(true)
     if (!isFormValid) return
-    dispatch(startEmailAndPasswordSignIn(formState))
+    dispatch(startRegisterEmailAndPassword(formState))
   }
   return (
     <AuthLayout title='Sign Up'>
