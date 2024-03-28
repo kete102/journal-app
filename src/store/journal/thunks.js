@@ -42,3 +42,9 @@ export const startLoadingNotes = () => {
     dispatch(setNotes(notes))
   }
 }
+
+export const startSetActiveNote = ({ title, body, id, date }) => {
+  return (dispatch) => {
+    dispatch(setActiveNote({ title, body, id, date }))
+  }
+}
