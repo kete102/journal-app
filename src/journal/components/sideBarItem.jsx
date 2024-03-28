@@ -11,7 +11,7 @@ import { useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 import { startSetActiveNote } from '../../store/journal/thunks'
 
-export const SideBarItem = ({ title, body, id, date }) => {
+export const SideBarItem = ({ title, body, id, date, imageUrls = [] }) => {
   const dispatch = useDispatch()
 
   const newTitle = useMemo(() => {
@@ -19,7 +19,7 @@ export const SideBarItem = ({ title, body, id, date }) => {
   }, [title])
 
   const handleSetActiveNote = () => {
-    dispatch(startSetActiveNote({ title, body, id, date }))
+    dispatch(startSetActiveNote({ title, body, id, date, imageUrls }))
   }
 
   return (

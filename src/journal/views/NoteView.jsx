@@ -7,7 +7,7 @@ import Toastify from 'toastify-js'
 import 'toastify-js/src/toastify.css'
 import { useForm } from '../../hooks/useForm'
 import { setActiveNote } from '../../store/journal/journal-slice'
-import { startSaveNote } from '../../store/journal/thunks'
+import { startSaveNote, startUploadingFiles } from '../../store/journal/thunks'
 import { ImagesGalery } from '../components'
 
 export const NoteView = () => {
@@ -47,11 +47,10 @@ export const NoteView = () => {
     dispatch(startSaveNote())
   }
 
-  const onFileInputChange = (e) => {
-    if (e.target.files === 0) return
+  const onFileInputChange = ({ target }) => {
+    if (target.files === 0) return
 
-    //dispatch(startUploadingFiles(target.files))
-    console.log(e.target.files)
+    dispatch(startUploadingFiles(target.files))
   }
 
   return (

@@ -6,9 +6,10 @@ import {
   savingNewNote,
   setNotes,
   setSaving,
-  updatedNote
+  updatedNote,
+  setPhotoToActiveNote
 } from './journal-slice'
-import { loadNotes } from '../../helpers'
+import { fileUpload, loadNotes } from '../../helpers'
 
 export const startNewNote = () => {
   return async (dispatch, getState) => {
@@ -45,9 +46,9 @@ export const startLoadingNotes = () => {
   }
 }
 
-export const startSetActiveNote = ({ title, body, id, date }) => {
+export const startSetActiveNote = ({ title, body, id, date, imageUrls }) => {
   return (dispatch) => {
-    dispatch(setActiveNote({ title, body, id, date }))
+    dispatch(setActiveNote({ title, body, id, date, imageUrls }))
   }
 }
 
@@ -67,5 +68,21 @@ export const startSaveNote = () => {
     await setDoc(docRef, noteToFirestore, { merge: true })
 
     dispatch(updatedNote(note))
+  }
+}
+
+export const startUploadingFiles = (files = []) => {
+  return async (dispatch) => {
+    dispatch(setSaving())
+
+    //await fileUpload(files[0])
+    const fileUploadPromises = []
+
+    for (const file of files) {
+      fileUploadPromises.push(fileUpload(file))
+    }
+
+    const photosUrls = await Promise.all(fileUploadPromises)
+    dispatch(setPhotoToActiveNote(photosUrls))
   }
 }
