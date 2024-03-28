@@ -4,7 +4,9 @@ import {
   addNewEmptyNote,
   setActiveNote,
   savingNewNote,
-  setNotes
+  setNotes,
+  setSaving,
+  updatedNote
 } from './journal-slice'
 import { loadNotes } from '../../helpers'
 
@@ -46,5 +48,24 @@ export const startLoadingNotes = () => {
 export const startSetActiveNote = ({ title, body, id, date }) => {
   return (dispatch) => {
     dispatch(setActiveNote({ title, body, id, date }))
+  }
+}
+
+export const startSaveNote = () => {
+  return async (dispatch, getState) => {
+    dispatch(setSaving())
+
+    const { uid } = getState().auth
+    const { active: note } = getState().journal
+
+    const noteToFirestore = { ...note }
+    //Aquí hay que borrar esta id porque si no se crearí ana nueva entrada en firestore ya que esta
+    //id es diferente a la id de la nota
+    delete noteToFirestore.id
+
+    const docRef = doc(FirebaseDB, `${uid}/journal/notes/${note.id}`)
+    await setDoc(docRef, noteToFirestore, { merge: true })
+
+    dispatch(updatedNote(note))
   }
 }

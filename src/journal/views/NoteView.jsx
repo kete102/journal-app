@@ -1,18 +1,50 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { SaveOutlined } from '@mui/icons-material'
 import { Button, Grid, TextField, Typography } from '@mui/material'
-import { useSelector } from 'react-redux'
+import { useEffect, useMemo } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import Toastify from 'toastify-js'
+import 'toastify-js/src/toastify.css'
 import { useForm } from '../../hooks/useForm'
+import { setActiveNote } from '../../store/journal/journal-slice'
+import { startSaveNote } from '../../store/journal/thunks'
 import { ImagesGalery } from '../components'
-import { useMemo } from 'react'
-export const NoteView = () => {
-  const { active: note } = useSelector((state) => state.journal)
 
-  const { body, title, date, onInputChange } = useForm(note)
+export const NoteView = () => {
+  const {
+    active: note,
+    messageSaved,
+    isSaving
+  } = useSelector((state) => state.journal)
+  const dispatch = useDispatch()
+  const { body, title, date, onInputChange, formState } = useForm(note)
 
   const dateString = useMemo(() => {
     const newDate = new Date(date)
     return newDate.toUTCString().slice(0, 16)
   }, [date])
+
+  useEffect(() => {
+    dispatch(setActiveNote(formState))
+  }, [formState])
+
+  useEffect(() => {
+    if (messageSaved.length > 0) {
+      Toastify({
+        text: messageSaved,
+        duration: 2000,
+        newWindow: true,
+        gravity: 'bottom',
+        position: 'left',
+        stopOnFocus: true,
+        onClick: () => Toastify.hideAll()
+      }).showToast()
+    }
+  }, [messageSaved])
+
+  const saveNote = () => {
+    dispatch(startSaveNote())
+  }
 
   return (
     <Grid
@@ -33,6 +65,8 @@ export const NoteView = () => {
       </Grid>
       <Grid item>
         <Button
+          disabled={isSaving}
+          onClick={saveNote}
           color='primary'
           sx={{ padding: 2 }}
         >
