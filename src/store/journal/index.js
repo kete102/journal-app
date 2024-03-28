@@ -1,2 +1,2 @@
-export * from './journla-slice'
+export * from './journal-slice'
 export * from './thunks'
