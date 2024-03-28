@@ -51,7 +51,10 @@ export const SignUpPage = () => {
   }
   return (
     <AuthLayout title='Sign Up'>
-      <form onSubmit={onSubmit}>
+      <form
+        onSubmit={onSubmit}
+        className='animate__animated animate__fadeIn'
+      >
         <Grid container>
           <Grid
             item
