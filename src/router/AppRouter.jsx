@@ -1,19 +1,32 @@
-import { Route, Routes } from 'react-router-dom'
+/* eslint-disable react-hooks/exhaustive-deps */
+import { Navigate, Route, Routes } from 'react-router-dom'
 import { AuthRoutes } from '../auth/routes/AuthRoutes'
+import { useCheckAuth } from '../hooks/useCheckAuth'
 import { JournalRoutes } from '../journal/routes/JornalRoutes'
+import { CheckingAuth } from '../ui/components/CheckingAuth'
 
 export const AppRouter = () => {
+  const { status } = useCheckAuth()
+
+  if (status === 'checking') return <CheckingAuth />
+
   return (
     <Routes>
-      {/* Login & SignUp */}
-      <Route
-        path='/auth/*'
-        element={<AuthRoutes />}
-      />
-      {/* JournalApp */}
+      {status === 'authenticated' ? (
+        <Route
+          path='/*'
+          element={<JournalRoutes />}
+        />
+      ) : (
+        <Route
+          path='/auth/*'
+          element={<AuthRoutes />}
+        />
+      )}
+
       <Route
         path='/*'
-        element={<JournalRoutes />}
+        element={<Navigate to='/auth/login' />}
       />
     </Routes>
   )
