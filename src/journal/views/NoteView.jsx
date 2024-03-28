@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { SaveOutlined } from '@mui/icons-material'
-import { Button, Grid, TextField, Typography } from '@mui/material'
-import { useEffect, useMemo } from 'react'
+import { SaveOutlined, UploadOutlined } from '@mui/icons-material'
+import { Button, Grid, IconButton, TextField, Typography } from '@mui/material'
+import { useEffect, useMemo, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Toastify from 'toastify-js'
 import 'toastify-js/src/toastify.css'
@@ -16,9 +16,10 @@ export const NoteView = () => {
     messageSaved,
     isSaving
   } = useSelector((state) => state.journal)
+
   const dispatch = useDispatch()
   const { body, title, date, onInputChange, formState } = useForm(note)
-
+  const fileInputRef = useRef()
   const dateString = useMemo(() => {
     const newDate = new Date(date)
     return newDate.toUTCString().slice(0, 16)
@@ -46,6 +47,13 @@ export const NoteView = () => {
     dispatch(startSaveNote())
   }
 
+  const onFileInputChange = (e) => {
+    if (e.target.files === 0) return
+
+    //dispatch(startUploadingFiles(target.files))
+    console.log(e.target.files)
+  }
+
   return (
     <Grid
       className='animate__animated animate__fadeIn'
@@ -64,6 +72,21 @@ export const NoteView = () => {
         </Typography>
       </Grid>
       <Grid item>
+        <input
+          type='file'
+          multiple
+          onChange={onFileInputChange}
+          style={{ display: 'none' }}
+          ref={fileInputRef}
+        />
+        <IconButton
+          color='primary'
+          disabled={isSaving}
+          onClick={() => fileInputRef.current.click()}
+        >
+          <UploadOutlined />
+        </IconButton>
+
         <Button
           disabled={isSaving}
           onClick={saveNote}
