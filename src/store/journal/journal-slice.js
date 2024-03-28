@@ -8,7 +8,7 @@ export const journalSlice = createSlice({
     notes: [],
     active: null
     /* active: {
-      id: crypto.randomUUID(),
+      id: 1,
       title: '',
       body: '',
       date: '',
