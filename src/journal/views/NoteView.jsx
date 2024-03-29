@@ -1,5 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { SaveOutlined, UploadOutlined } from '@mui/icons-material'
+import {
+  DeleteOutline,
+  SaveOutlined,
+  UploadOutlined
+} from '@mui/icons-material'
 import { Button, Grid, IconButton, TextField, Typography } from '@mui/material'
 import { useEffect, useMemo, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -7,7 +11,11 @@ import Toastify from 'toastify-js'
 import 'toastify-js/src/toastify.css'
 import { useForm } from '../../hooks/useForm'
 import { setActiveNote } from '../../store/journal/journal-slice'
-import { startSaveNote, startUploadingFiles } from '../../store/journal/thunks'
+import {
+  startDeleteNoteById,
+  startSaveNote,
+  startUploadingFiles
+} from '../../store/journal/thunks'
 import { ImagesGalery } from '../components'
 
 export const NoteView = () => {
@@ -16,7 +24,6 @@ export const NoteView = () => {
     messageSaved,
     isSaving
   } = useSelector((state) => state.journal)
-
   const dispatch = useDispatch()
   const { body, title, date, onInputChange, formState } = useForm(note)
   const fileInputRef = useRef()
@@ -53,6 +60,18 @@ export const NoteView = () => {
     dispatch(startUploadingFiles(target.files))
   }
 
+  const onDelete = () => {
+    dispatch(startDeleteNoteById())
+    Toastify({
+      text: 'Nota borrada correctamente',
+      duration: 2000,
+      newWindow: true,
+      gravity: 'bottom',
+      position: 'left',
+      stopOnFocus: true,
+      onClick: () => Toastify.hideAll()
+    }).showToast()
+  }
   return (
     <Grid
       className='animate__animated animate__fadeIn'
@@ -85,7 +104,6 @@ export const NoteView = () => {
         >
           <UploadOutlined />
         </IconButton>
-
         <Button
           disabled={isSaving}
           onClick={saveNote}
@@ -94,6 +112,12 @@ export const NoteView = () => {
         >
           <SaveOutlined sx={{ fontSize: 30, mr: 1 }} />
           Save
+        </Button>
+        <Button
+          onClick={onDelete}
+          color='error'
+        >
+          <DeleteOutline />
         </Button>
       </Grid>
       <Grid container>
@@ -120,7 +144,7 @@ export const NoteView = () => {
           onChange={onInputChange}
         />
       </Grid>
-      <ImagesGalery />
+      {note.imageUrls && <ImagesGalery images={note.imageUrls} />}
     </Grid>
   )
 }

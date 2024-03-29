@@ -48,21 +48,32 @@ export const journalSlice = createSlice({
       //TODO: mostrar mensaje de update
       state.messageSaved = `Nota actualizada correctamente`
     },
+
+    clearNotesLogout: (state) => {
+      state.notes = []
+      state.isSaving = false
+      state.active = null
+      state.messageSaved = ''
+    },
     setPhotoToActiveNote: (state, { payload }) => {
       state.active.imageUrls = [...state.active.imageUrls, ...payload]
       state.isSaving = false
     },
-    deleteNoteById: (state, action) => {}
+    deleteNoteById: (state, action) => {
+      state.notes = state.notes.filter((note) => note.id !== action.payload)
+      state.active = null
+    }
   }
 })
 
 export const {
   addNewEmptyNote,
+  clearNotesLogout,
   deleteNoteById,
   setActiveNote,
   setNotes,
   setSaving,
-  updatedNote,
   setPhotoToActiveNote,
-  savingNewNote
+  savingNewNote,
+  updatedNote
 } = journalSlice.actions
